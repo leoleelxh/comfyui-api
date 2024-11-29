@@ -19,6 +19,33 @@ def get_comfyui_url(endpoint):
     print(f"ComfyUI URL: {url}")  # 打印实际使用的URL
     return url
 
+def make_comfyui_request(method, endpoint, **kwargs):
+    """发送请求到ComfyUI，带有重试机制"""
+    url = get_comfyui_url(endpoint)
+    max_retries = 3
+    retry_delay = 1  # 初始延迟1秒
+    
+    for attempt in range(max_retries):
+        try:
+            response = requests.request(method, url, **kwargs)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.HTTPError as e:
+            if response.status_code == 500:
+                if attempt < max_retries - 1:
+                    print(f"Attempt {attempt + 1} failed, retrying in {retry_delay} seconds...")
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # 指数退避
+                    continue
+            raise e
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                print(f"Attempt {attempt + 1} failed, retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+                retry_delay *= 2
+                continue
+            raise e
+
 def load_workflow(workflow_name):
     """加载指定的工作流文件"""
     workflow_path = WORKFLOWS_DIR / f"{workflow_name}.json"
@@ -34,8 +61,7 @@ def test_comfy_connection():
     try:
         url = get_comfyui_url('/system_stats')
         print(f"Testing ComfyUI connection at: {url}")
-        response = requests.get(url)
-        response.raise_for_status()
+        response = make_comfyui_request('GET', '/system_stats')
         return jsonify({
             'status': 'success',
             'comfyui_url': url,
@@ -80,15 +106,35 @@ def run_workflow(workflow_name):
         print(f"Parsed request data: {request_data}")
         
         # 如果请求中包含参数，则更新工作流参数
-        if request_data:
+        if isinstance(request_data, str):
+            # 如果是字符串，需要找到工作流中的 CLIPTextEncode 节点
+            text_nodes = {
+                node_id: node_data 
+                for node_id, node_data in workflow_data.items()
+                if node_data.get('class_type') == 'CLIPTextEncode'
+            }
+            
+            if not text_nodes:
+                return jsonify({
+                    'error': 'No CLIPTextEncode node found in workflow'
+                }), 400
+                
+            # 使用找到的第一个文本节点（如果有多个，用户应该使用详细的字典格式来指定）
+            text_node_id = next(iter(text_nodes))
+            workflow_data[text_node_id]['inputs']['text'] = request_data
+            
+        elif isinstance(request_data, dict):
+            # 如果是字典，按原来的方式更新节点
             for node_id, node_data in request_data.items():
-                if node_id in workflow_data['prompt']:
-                    # 如果是inputs对象，直接更新inputs中的参数
+                if node_id in workflow_data:
                     if 'inputs' in node_data:
-                        workflow_data['prompt'][node_id]['inputs'].update(node_data['inputs'])
+                        workflow_data[node_id]['inputs'].update(node_data['inputs'])
                     else:
-                        # 如果直接提供参数，则更新inputs
-                        workflow_data['prompt'][node_id]['inputs'].update(node_data)
+                        workflow_data[node_id]['inputs'].update(node_data)
+        else:
+            return jsonify({
+                'error': 'Request data must be either a string (prompt text) or an object (node updates)'
+            }), 400
         
         # 打印最终的工作流数据
         print(f"Final workflow data: {json.dumps(workflow_data, indent=2)}")
@@ -101,14 +147,10 @@ def run_workflow(workflow_name):
             prompt_url = get_comfyui_url('/prompt')
             print(f"Sending workflow to prompt endpoint: {prompt_url}")
             
-            prompt_response = requests.post(
-                prompt_url,
-                json={
-                    "prompt": workflow_data["prompt"],
-                    "client_id": client_id
-                },
-                headers={'Content-Type': 'application/json'}
-            )
+            prompt_response = make_comfyui_request('POST', '/prompt', json={
+                "prompt": workflow_data,
+                "client_id": client_id
+            })
             
             print(f"Prompt Response Status: {prompt_response.status_code}")
             print(f"Prompt Response Content: {prompt_response.text}")
@@ -150,7 +192,7 @@ def run_workflow(workflow_name):
 def get_all_history():
     """获取所有历史记录"""
     try:
-        response = requests.get(get_comfyui_url('/history'))
+        response = make_comfyui_request('GET', '/history')
         if response.status_code == 200:
             return jsonify(response.json())
         else:
@@ -170,7 +212,7 @@ def get_history(prompt_id):
         history_url = get_comfyui_url(f'/history/{prompt_id}')
         print(f"Fetching history from: {history_url}")
         
-        response = requests.get(history_url)
+        response = make_comfyui_request('GET', f'/history/{prompt_id}')
         print(f"History Response Status: {response.status_code}")
         print(f"History Response Content: {response.text}")
         
@@ -193,7 +235,7 @@ def get_image(prompt_id):
     try:
         # 1. 先获取历史记录以找到图片路径
         history_url = get_comfyui_url(f'/history/{prompt_id}')
-        history_response = requests.get(history_url)
+        history_response = make_comfyui_request('GET', f'/history/{prompt_id}')
         
         if history_response.status_code != 200:
             return jsonify({
@@ -241,10 +283,7 @@ def submit_workflow():
     """提交工作流到ComfyUI"""
     try:
         workflow_data = request.json
-        response = requests.post(
-            get_comfyui_url('/api/queue'), 
-            json=workflow_data
-        )
+        response = make_comfyui_request('POST', '/api/queue', json=workflow_data)
         return jsonify(response.json())
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -253,7 +292,7 @@ def submit_workflow():
 def get_status():
     """获取ComfyUI当前状态"""
     try:
-        response = requests.get(get_comfyui_url('/system_stats'))
+        response = make_comfyui_request('GET', '/system_stats')
         return jsonify(response.json())
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -262,7 +301,7 @@ def get_status():
 def view_queue():
     """查看当前队列状态"""
     try:
-        response = requests.get(get_comfyui_url('/queue'))
+        response = make_comfyui_request('GET', '/queue')
         return jsonify(response.json())
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -272,8 +311,8 @@ def check_task_status(prompt_id):
     """检查指定任务的状态，包括图片生成进度"""
     try:
         # 1. 检查队列状态
-        queue_response = requests.get(get_comfyui_url('/queue'))
-        if queue_response.status_code == 200:
+        try:
+            queue_response = make_comfyui_request('GET', '/queue')
             queue_data = queue_response.json()
             
             # 检查是否在执行队列中
@@ -293,63 +332,46 @@ def check_task_status(prompt_id):
                         'message': 'Task is waiting in queue',
                         'queue_position': queue_data['queue_pending'].index(item) + 1
                     })
+        except Exception as e:
+            print(f"Error checking queue status: {str(e)}")
+            # 继续检查历史记录，即使队列检查失败
         
         # 2. 检查历史记录
-        history_response = requests.get(get_comfyui_url(f'/history/{prompt_id}'))
-        if history_response.status_code == 200:
+        try:
+            history_response = make_comfyui_request('GET', f'/history/{prompt_id}')
             history_data = history_response.json()
             
-            if not history_data:
-                return jsonify({
-                    'status': 'not_found',
-                    'message': 'Task not found in history'
-                })
-            
-            task_data = history_data.get(prompt_id, {})
-            outputs = task_data.get('outputs', {})
-            
-            # 检查是否有图片输出
-            for node_id, output in outputs.items():
-                if 'images' in output:
-                    images = []
-                    for img in output['images']:
-                        image_url = get_comfyui_url(f"/view?filename={img['filename']}&subfolder={img.get('subfolder', '')}&type=temp")
-                        images.append({
-                            'url': image_url,
-                            'filename': img['filename'],
-                            'subfolder': img.get('subfolder', ''),
-                            'type': 'temp'
-                        })
-                    
+            if history_data:
+                # 如果在历史记录中找到了，说明任务已完成
+                outputs = history_data.get('outputs', {})
+                if outputs:
                     return jsonify({
                         'status': 'completed',
-                        'message': 'Image generation completed',
-                        'images': images,
-                        'execution_time': task_data.get('execution_time', 0),
-                        'node_errors': task_data.get('node_errors', {})
+                        'message': 'Task completed successfully',
+                        'outputs': outputs
                     })
+                else:
+                    return jsonify({
+                        'status': 'completed',
+                        'message': 'Task completed but no outputs found',
+                        'history_data': history_data
+                    })
+        except Exception as e:
+            print(f"Error checking history: {str(e)}")
+            # 如果历史记录检查也失败，返回未知状态
             
-            # 如果有历史记录但没有图片
-            return jsonify({
-                'status': 'processing',
-                'message': 'Task is being processed',
-                'execution_time': task_data.get('execution_time', 0),
-                'node_errors': task_data.get('node_errors', {})
-            })
-        
-        # 3. 如果都没有找到
+        # 3. 如果既不在队列中也不在历史记录中
         return jsonify({
             'status': 'unknown',
-            'message': 'Could not determine task status',
-            'queue_response': queue_response.status_code,
-            'history_response': history_response.status_code
+            'message': 'Task not found in queue or history'
         })
-        
+            
     except Exception as e:
         print(f"Error checking task status: {str(e)}")
         return jsonify({
+            'error': str(e),
             'status': 'error',
-            'message': str(e)
+            'message': 'Failed to check task status'
         }), 500
 
 if __name__ == '__main__':
