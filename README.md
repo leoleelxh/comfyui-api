@@ -1,6 +1,6 @@
 # ComfyUI API Service
 
-这是一个基于Flask的ComfyUI API服务，提供了便捷的REST API接口来与ComfyUI进行交互。
+基于Flask的ComfyUI API服务，用于远程图像生成和工作流管理。
 
 ## 功能特性
 
@@ -9,38 +9,217 @@
 - 支持查询历史记录
 - 支持查询系统状态
 - 支持查看队列状态
+- 支持测试连接
+- 支持工作流管理
+- 支持任务状态查询
+- 支持历史记录查询
+- 支持图片获取
 
 ## 安装
 
-1. 克隆项目到本地
-2. 安装依赖：
+1. 安装依赖：
 ```bash
 pip install -r requirements.txt
 ```
 
-## 配置
+2. 配置环境变量（创建.env文件）：
+```env
+COMFYUI_BASE_URL=http://localhost:8188
+FLASK_DEBUG=True
+FLASK_HOST=0.0.0.0
+FLASK_PORT=5000
+```
 
-可以通过环境变量或.env文件配置以下参数：
+## API 端点
 
-- COMFYUI_BASE_URL: ComfyUI服务地址（默认：http://127.0.0.1:8188）
-- FLASK_DEBUG: 调试模式（默认：True）
-- FLASK_HOST: 服务监听地址（默认：0.0.0.0）
-- FLASK_PORT: 服务端口（默认：5000）
+### 1. 测试连接
 
-## API接口
+测试ComfyUI服务器连接状态。
 
-### 提交工作流
-- POST /api/workflow
-- 请求体：ComfyUI工作流JSON数据
+```http
+GET /api/test_comfy
+```
 
-### 获取历史记录
-- GET /api/history
+响应示例：
+```json
+{
+    "status": "success",
+    "comfyui_url": "http://localhost:8188/system_stats",
+    "response": {
+        "system_stats": { ... }
+    }
+}
+```
 
-### 获取系统状态
-- GET /api/status
+### 2. 工作流管理
 
-### 查看队列状态
-- GET /api/view_queue
+#### 列出所有工作流
+```http
+GET /api/workflows
+```
+
+响应示例：
+```json
+{
+    "workflows": ["sd_txt2img", "sd_img2img"]
+}
+```
+
+#### 运行工作流
+```http
+POST /api/workflow/<workflow_name>
+Content-Type: application/json
+
+{
+    "1": {
+        "inputs": {
+            "text": "a beautiful mountain landscape"
+        }
+    }
+}
+```
+
+响应示例：
+```json
+{
+    "status": "success",
+    "prompt_id": "c74f73fc-fb01-4b3c-81a5-cab506c43e27",
+    "node_errors": {},
+    "error": null,
+    "client_id": "my-api-1732866007"
+}
+```
+
+### 3. 任务状态查询
+
+#### 查询任务状态
+```http
+GET /api/task_status/<prompt_id>
+```
+
+可能的响应状态：
+
+1. 等待中：
+```json
+{
+    "status": "pending",
+    "message": "Task is waiting in queue",
+    "queue_position": 1
+}
+```
+
+2. 执行中：
+```json
+{
+    "status": "running",
+    "message": "Task is currently running",
+    "execution_info": { ... }
+}
+```
+
+3. 已完成：
+```json
+{
+    "status": "completed",
+    "message": "Image generation completed",
+    "images": [
+        {
+            "url": "http://localhost:8188/view?filename=xxx.png",
+            "filename": "xxx.png",
+            "subfolder": "",
+            "type": "temp"
+        }
+    ],
+    "execution_time": 10.5,
+    "node_errors": {}
+}
+```
+
+4. 其他状态：
+- `processing`: 处理中但未生成图片
+- `not_found`: 未找到任务
+- `unknown`: 状态未知
+- `error`: 发生错误
+
+### 4. 历史记录
+
+#### 获取所有历史记录
+```http
+GET /api/history
+```
+
+#### 获取特定任务历史
+```http
+GET /api/history/<prompt_id>
+```
+
+### 5. 图片获取
+
+获取生成的图片信息：
+```http
+GET /api/image/<prompt_id>
+```
+
+响应示例：
+```json
+{
+    "status": "success",
+    "images": [
+        {
+            "url": "http://localhost:8188/view?filename=ComfyUI_00001_.png",
+            "filename": "ComfyUI_00001_.png",
+            "subfolder": "",
+            "type": "temp"
+        }
+    ]
+}
+```
+
+## 工作流参数说明
+
+工作流JSON格式：
+```json
+{
+    "1": {
+        "inputs": {
+            "text": "提示词"
+        }
+    },
+    "3": {
+        "inputs": {
+            "seed": 42,
+            "steps": 20,
+            "cfg": 7.5,
+            "sampler_name": "euler_ancestral",
+            "scheduler": "normal",
+            "denoise": 1.0
+        }
+    }
+}
+```
+
+## 错误处理
+
+所有API错误响应格式：
+```json
+{
+    "error": "错误描述",
+    "status_code": 400
+}
+```
+
+## 开发说明
+
+1. 工作流文件存放在 `workflows` 目录
+2. 支持动态参数更新
+3. 提供详细的错误信息和日志
+4. 支持异步任务状态查询
+
+## 注意事项
+
+1. 图片URL中的 `type=temp` 表示临时文件，会定期清理
+2. 建议定期查询任务状态直到完成
+3. 确保ComfyUI服务器地址配置正确
 
 ## 运行
 

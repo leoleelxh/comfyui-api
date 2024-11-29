@@ -267,6 +267,91 @@ def view_queue():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/task_status/<prompt_id>', methods=['GET'])
+def check_task_status(prompt_id):
+    """检查指定任务的状态，包括图片生成进度"""
+    try:
+        # 1. 检查队列状态
+        queue_response = requests.get(get_comfyui_url('/queue'))
+        if queue_response.status_code == 200:
+            queue_data = queue_response.json()
+            
+            # 检查是否在执行队列中
+            for item in queue_data.get('queue_running', []):
+                if item.get('prompt_id') == prompt_id:
+                    return jsonify({
+                        'status': 'running',
+                        'message': 'Task is currently running',
+                        'execution_info': item
+                    })
+            
+            # 检查是否在等待队列中
+            for item in queue_data.get('queue_pending', []):
+                if item.get('prompt_id') == prompt_id:
+                    return jsonify({
+                        'status': 'pending',
+                        'message': 'Task is waiting in queue',
+                        'queue_position': queue_data['queue_pending'].index(item) + 1
+                    })
+        
+        # 2. 检查历史记录
+        history_response = requests.get(get_comfyui_url(f'/history/{prompt_id}'))
+        if history_response.status_code == 200:
+            history_data = history_response.json()
+            
+            if not history_data:
+                return jsonify({
+                    'status': 'not_found',
+                    'message': 'Task not found in history'
+                })
+            
+            task_data = history_data.get(prompt_id, {})
+            outputs = task_data.get('outputs', {})
+            
+            # 检查是否有图片输出
+            for node_id, output in outputs.items():
+                if 'images' in output:
+                    images = []
+                    for img in output['images']:
+                        image_url = get_comfyui_url(f"/view?filename={img['filename']}&subfolder={img.get('subfolder', '')}&type=temp")
+                        images.append({
+                            'url': image_url,
+                            'filename': img['filename'],
+                            'subfolder': img.get('subfolder', ''),
+                            'type': 'temp'
+                        })
+                    
+                    return jsonify({
+                        'status': 'completed',
+                        'message': 'Image generation completed',
+                        'images': images,
+                        'execution_time': task_data.get('execution_time', 0),
+                        'node_errors': task_data.get('node_errors', {})
+                    })
+            
+            # 如果有历史记录但没有图片
+            return jsonify({
+                'status': 'processing',
+                'message': 'Task is being processed',
+                'execution_time': task_data.get('execution_time', 0),
+                'node_errors': task_data.get('node_errors', {})
+            })
+        
+        # 3. 如果都没有找到
+        return jsonify({
+            'status': 'unknown',
+            'message': 'Could not determine task status',
+            'queue_response': queue_response.status_code,
+            'history_response': history_response.status_code
+        })
+        
+    except Exception as e:
+        print(f"Error checking task status: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
 if __name__ == '__main__':
     app.run(
         host=Config.HOST,
