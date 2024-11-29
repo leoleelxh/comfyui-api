@@ -1,0 +1,91 @@
+name: "ComfyUI Image Generation and Upload"
+description: "使用ComfyUI生成图片并自动上传到图床"
+
+prompt_template: |
+  根据以下提示词生成图片：{{input.prompt}}
+
+variables:
+  - name: comfyui_api_url
+    type: string
+    default: "http://localhost:8888"
+    description: "ComfyUI API地址"
+  - name: workflow_name
+    type: string
+    default: "workflow-api"
+    description: "ComfyUI工作流名称"
+  - name: node_id
+    type: string
+    default: "4"
+    description: "ComfyUI工作流节点ID"
+  - name: lsky_upload_url
+    type: string
+    default: "http://your-lsky-url/api/v1/upload"
+    description: "图床上传API地址"
+  - name: lsky_token
+    type: string
+    default: "Bearer your-token"
+    description: "图床API认证Token"
+
+nodes:
+  - name: generate_image
+    type: http_request
+    config:
+      url: "{{vars.comfyui_api_url}}/api/workflow/{{vars.workflow_name}}"
+      method: POST
+      headers:
+        Content-Type: "application/json"
+      body:
+        "{{vars.node_id}}":
+          inputs:
+            text: "{{input.prompt}}"
+      timeout: 60
+
+  - name: check_status
+    type: http_request
+    config:
+      url: "{{vars.comfyui_api_url}}/api/task_status/{{generate_image.data.prompt_id}}"
+      method: GET
+      timeout: 30
+      retry:
+        max_attempts: 20
+        interval: 5
+      success_conditions:
+        - "{{response.status}} == 'completed'"
+
+  - name: get_image
+    type: http_request
+    config:
+      url: "{{vars.comfyui_api_url}}/api/history/{{generate_image.data.prompt_id}}/image"
+      method: GET
+      timeout: 30
+
+  - name: upload_to_host
+    type: http_request
+    config:
+      url: "{{vars.lsky_upload_url}}"
+      method: POST
+      headers:
+        Authorization: "{{vars.lsky_token}}"
+      body:
+        file: "{{get_image.data}}"
+      timeout: 120
+
+  - name: format_response
+    type: text_response
+    config:
+      text: |
+        图片生成并上传成功！
+        访问地址：{{upload_to_host.data.data.links.url}}
+        
+        生成参数：
+        - Prompt: {{input.prompt}}
+        - 任务ID: {{generate_image.data.prompt_id}}
+
+input_schema:
+  type: object
+  properties:
+    prompt:
+      type: string
+      title: "提示词"
+      description: "请输入图片生成提示词"
+      required: true
