@@ -61,11 +61,26 @@ GET /api/workflows
 响应示例：
 ```json
 {
-    "workflows": ["sd_txt2img", "sd_img2img"]
+    "workflows": ["sd_txt2img", "sd_img2img", "flux_test"]
 }
 ```
 
 #### 运行工作流
+
+提供两种请求格式：
+
+1. 简单格式（推荐）：直接指定提示语和目标节点
+```http
+POST /api/workflow/<workflow_name>
+Content-Type: application/json
+
+{
+    "prompt": "your prompt text",
+    "target_node": "41"  // 可选，不指定时会自动查找第一个文本输入节点
+}
+```
+
+2. 高级格式：直接更新节点参数
 ```http
 POST /api/workflow/<workflow_name>
 Content-Type: application/json
@@ -89,6 +104,37 @@ Content-Type: application/json
     "client_id": "my-api-1732866007"
 }
 ```
+
+错误响应示例：
+```json
+{
+    "error": "Target node 41 is not a text input node"
+}
+```
+
+或
+```json
+{
+    "error": "No suitable text input node found in workflow"
+}
+```
+
+注意事项：
+1. 简单格式（推荐）：
+   - `prompt`: 要传入的提示语文本
+   - `target_node`: 可选，目标节点ID。如果指定，必须是工作流中存在的文本输入节点（支持 Text Multiline 或 CLIPTextEncode 类型）
+   - 如果不指定 target_node，API 会自动查找工作流中第一个合适的文本输入节点
+
+2. 高级格式：
+   - 直接指定要更新的节点ID和其输入参数
+   - 需要了解工作流的具体结构
+   - 可以同时更新多个节点的多个参数
+
+调试信息：
+- API 会在服务器终端打印完整的工作流 JSON 和发送给 ComfyUI 的请求内容
+- 格式化的日志包括：
+  1. 最终的工作流 JSON（=== Final Workflow JSON ===）
+  2. 发送给 ComfyUI 的完整请求（=== Request to ComfyUI ===）
 
 ### 3. 任务状态查询
 
@@ -221,8 +267,95 @@ GET /api/image/<prompt_id>
 2. 建议定期查询任务状态直到完成
 3. 确保ComfyUI服务器地址配置正确
 
+## 调用流程指引
+
+### 基本工作流程
+
+```mermaid
+sequenceDiagram
+    participant Client as 客户端
+    participant API as API服务
+    participant ComfyUI as ComfyUI服务
+    
+    Client->>API: 1. GET /api/workflows
+    API-->>Client: 返回可用工作流列表
+    
+    Client->>API: 2. POST /api/workflow/{workflow_name}<br>{"prompt": "text", "target_node": "id"}
+    API->>API: 2.1 加载并更新工作流
+    API->>ComfyUI: 2.2 提交工作流
+    ComfyUI-->>API: 返回 prompt_id
+    API-->>Client: 返回 prompt_id 和状态
+    
+    Client->>API: 3. GET /api/task_status/{prompt_id}
+    API->>ComfyUI: 查询任务状态
+    ComfyUI-->>API: 返回状态信息
+    API-->>Client: 返回处理状态和结果
+```
+
+### 详细状态流转
+
+```mermaid
+stateDiagram-v2
+    [*] --> 提交工作流
+    提交工作流 --> 等待中: 进入队列
+    等待中 --> 执行中: 开始处理
+    执行中 --> 已完成: 生成成功
+    执行中 --> 错误: 生成失败
+    已完成 --> [*]
+    错误 --> [*]
+
+    state 等待中 {
+        [*] --> 队列中
+        队列中 --> 准备执行
+    }
+    
+    state 执行中 {
+        [*] --> 加载模型
+        加载模型 --> 生成图像
+        生成图像 --> 保存结果
+    }
+```
+
+### 推荐使用流程
+
+1. **准备阶段**
+   ```mermaid
+   flowchart LR
+       A[准备工作流文件] --> B[上传到 workflows 目录]
+       B --> C[确认文本输入节点 ID]
+   ```
+
+2. **调用阶段**
+   ```mermaid
+   flowchart LR
+       A[获取工作流列表] --> B[提交生成请求]
+       B --> C[轮询任务状态]
+       C --> D{状态检查}
+       D -->|完成| E[获取结果]
+       D -->|进行中| C
+       D -->|错误| F[错误处理]
+   ```
+
+### 错误处理流程
+
+```mermaid
+flowchart TD
+    A[API 调用] --> B{检查响应}
+    B -->|400| C[请求格式错误]
+    B -->|404| D[工作流不存在]
+    B -->|500| E[服务器错误]
+    B -->|200| F[调用成功]
+    
+    C --> G[检查请求格式]
+    D --> H[检查工作流文件]
+    E --> I[查看服务日志]
+    
+    G --> J[重新提交]
+    H --> J
+    I --> J
+```
+
 ## 运行
 
 ```bash
 python app.py
-```
