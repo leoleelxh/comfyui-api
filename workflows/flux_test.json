@@ -1,206 +1,679 @@
 {
-  "10": {
-    "inputs": {
-      "unet_name": "flux\\flux1-dev-Q8_0.gguf"
-    },
-    "class_type": "UnetLoaderGGUF",
-    "_meta": {
-      "title": "Unet Loader (GGUF)"
-    }
-  },
-  "11": {
-    "inputs": {
-      "seed": 85812852187008,
-      "steps": 20,
-      "cfg": 1,
-      "sampler_name": "euler",
-      "scheduler": "normal",
-      "denoise": 1,
-      "model": [
-        "19",
-        0
+  "last_node_id": 45,
+  "last_link_id": 31,
+  "nodes": [
+    {
+      "id": 10,
+      "type": "UnetLoaderGGUF",
+      "pos": [
+        100,
+        130
       ],
-      "positive": [
-        "12",
-        0
+      "size": [
+        315,
+        58
       ],
-      "negative": [
-        "13",
-        0
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            25
+          ],
+          "label": "MODEL"
+        }
       ],
-      "latent_image": [
-        "18",
-        0
+      "properties": {
+        "Node name for S&R": "UnetLoaderGGUF"
+      },
+      "widgets_values": [
+        "flux\\flux1-dev-Q8_0.gguf"
       ]
     },
-    "class_type": "KSampler",
-    "_meta": {
-      "title": "K采样器"
-    }
-  },
-  "12": {
-    "inputs": {
-      "text": [
-        "39",
-        0
+    {
+      "id": 11,
+      "type": "KSampler",
+      "pos": [
+        1600,
+        130
       ],
-      "clip": [
-        "14",
-        0
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP文本编码器"
-    }
-  },
-  "13": {
-    "inputs": {
-      "text": "",
-      "clip": [
-        "14",
-        0
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP文本编码器"
-    }
-  },
-  "14": {
-    "inputs": {
-      "clip_name1": "clip_l.safetensors",
-      "clip_name2": "flux\\t5xxl_fp8_e4m3fn.safetensors",
-      "type": "flux"
-    },
-    "class_type": "DualCLIPLoader",
-    "_meta": {
-      "title": "双CLIP加载器"
-    }
-  },
-  "15": {
-    "inputs": {
-      "samples": [
-        "11",
-        0
+      "size": [
+        315,
+        262
       ],
-      "vae": [
-        "16",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAE解码"
-    }
-  },
-  "16": {
-    "inputs": {
-      "vae_name": "ae.sft"
-    },
-    "class_type": "VAELoader",
-    "_meta": {
-      "title": "VAE加载器"
-    }
-  },
-  "18": {
-    "inputs": {
-      "width": 680,
-      "height": 1024,
-      "batch_size": 1
-    },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "空Latent"
-    }
-  },
-  "19": {
-    "inputs": {
-      "lora_name": "自制\\flux-gender-topic\\gender-topic.safetensors",
-      "strength_model": 1.2,
-      "model": [
-        "10",
-        0
-      ]
-    },
-    "class_type": "LoraLoaderModelOnly",
-    "_meta": {
-      "title": "LoRA加载器(仅模型)"
-    }
-  },
-  "37": {
-    "inputs": {
-      "filename_prefix": "ComfyUI",
-      "images": [
-        "15",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "保存图像"
-    }
-  },
-  "39": {
-    "inputs": {
-      "delimiter": ", ",
-      "clean_whitespace": "true",
-      "text_a": [
-        "40",
-        0
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 16,
+          "label": "模型"
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 17,
+          "label": "正面条件"
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 18,
+          "label": "负面条件"
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 19,
+          "label": "Latent"
+        }
       ],
-      "text_b": [
-        "42",
-        0
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            23
+          ],
+          "label": "Latent"
+        }
       ],
-      "text_c": [
-        "43",
-        0
-      ],
-      "text_d": [
-        "44",
-        0
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        85812852187008,
+        "randomize",
+        20,
+        1,
+        "euler",
+        "normal",
+        1
       ]
     },
-    "class_type": "Text Concatenate",
-    "_meta": {
-      "title": "文本连锁"
-    }
-  },
-  "40": {
-    "inputs": {
-      "text": "gender topic, in front of a white background"
+    {
+      "id": 12,
+      "type": "CLIPTextEncode",
+      "pos": [
+        1100,
+        130
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 21,
+          "label": "CLIP"
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 20,
+          "widget": {
+            "name": "text"
+          },
+          "label": "文本"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            17
+          ],
+          "label": "条件"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "",
+        [
+          false,
+          true
+        ]
+      ]
     },
-    "class_type": "Text Multiline",
-    "_meta": {
-      "title": "多行文本"
-    }
-  },
-  "42": {
-    "inputs": {
-      "text": "p1"
+    {
+      "id": 14,
+      "type": "DualCLIPLoader",
+      "pos": [
+        100,
+        318
+      ],
+      "size": [
+        315,
+        106
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            21,
+            22
+          ],
+          "label": "CLIP"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DualCLIPLoader"
+      },
+      "widgets_values": [
+        "clip_l.safetensors",
+        "flux\\t5xxl_fp8_e4m3fn.safetensors",
+        "flux"
+      ]
     },
-    "class_type": "Text Multiline",
-    "_meta": {
-      "title": "多行文本"
-    }
-  },
-  "43": {
-    "inputs": {
-      "text": "p2"
+    {
+      "id": 15,
+      "type": "VAEDecode",
+      "pos": [
+        2015,
+        130
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 23,
+          "label": "Latent"
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 24,
+          "label": "VAE"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            26
+          ],
+          "label": "图像"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
     },
-    "class_type": "Text Multiline",
-    "_meta": {
-      "title": "多行文本"
-    }
-  },
-  "44": {
-    "inputs": {
-      "text": "p3"
+    {
+      "id": 16,
+      "type": "VAELoader",
+      "pos": [
+        100,
+        554
+      ],
+      "size": [
+        315,
+        58
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            24
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "ae.sft"
+      ]
     },
-    "class_type": "Text Multiline",
-    "_meta": {
-      "title": "多行文本"
+    {
+      "id": 18,
+      "type": "EmptyLatentImage",
+      "pos": [
+        100,
+        742
+      ],
+      "size": [
+        315,
+        106
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            19
+          ],
+          "label": "Latent"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        680,
+        1024,
+        1
+      ]
+    },
+    {
+      "id": 19,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        600,
+        130
+      ],
+      "size": [
+        315,
+        82
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 25,
+          "label": "模型"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            16
+          ],
+          "label": "模型"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly"
+      },
+      "widgets_values": [
+        "自制\\flux-gender-topic\\gender-topic.safetensors",
+        1.2
+      ]
+    },
+    {
+      "id": 37,
+      "type": "SaveImage",
+      "pos": [
+        2325,
+        130
+      ],
+      "size": [
+        315,
+        58
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 26,
+          "label": "图像"
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 39,
+      "type": "Text Concatenate",
+      "pos": [
+        600,
+        672
+      ],
+      "size": [
+        315,
+        178
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "type": "STRING",
+          "link": 27,
+          "widget": {
+            "name": "text_a"
+          },
+          "shape": 7,
+          "label": "文本_A"
+        },
+        {
+          "name": "text_b",
+          "type": "STRING",
+          "link": null,
+          "widget": {
+            "name": "text_b"
+          },
+          "shape": 7,
+          "label": "文本_B"
+        },
+        {
+          "name": "text_c",
+          "type": "STRING",
+          "link": 31,
+          "widget": {
+            "name": "text_c"
+          },
+          "shape": 7,
+          "label": "文本_C"
+        },
+        {
+          "name": "text_d",
+          "type": "STRING",
+          "link": null,
+          "widget": {
+            "name": "text_d"
+          },
+          "shape": 7,
+          "label": "文本_d"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            20
+          ],
+          "label": "字符串"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Text Concatenate"
+      },
+      "widgets_values": [
+        ", ",
+        "true",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 13,
+      "type": "CLIPTextEncode",
+      "pos": [
+        572,
+        392
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 22,
+          "label": "CLIP"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            18
+          ],
+          "label": "条件"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "nsfw, nipples, naked, Irrational composition, irrational body structure, low image quality.",
+        [
+          false,
+          true
+        ]
+      ]
+    },
+    {
+      "id": 40,
+      "type": "Text Multiline",
+      "pos": [
+        92,
+        955
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            27
+          ],
+          "label": "字符串"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Text Multiline"
+      },
+      "widgets_values": [
+        "gender topic, in front of a white background",
+        [
+          false,
+          true
+        ]
+      ]
+    },
+    {
+      "id": 45,
+      "type": "Text Multiline",
+      "pos": [
+        91,
+        1242
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            31
+          ],
+          "label": "字符串",
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Text Multiline"
+      },
+      "widgets_values": [
+        "gender topic, in front of a white background",
+        [
+          false,
+          true
+        ]
+      ]
     }
-  }
+  ],
+  "links": [
+    [
+      16,
+      19,
+      0,
+      11,
+      0,
+      "MODEL"
+    ],
+    [
+      17,
+      12,
+      0,
+      11,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      18,
+      13,
+      0,
+      11,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      19,
+      18,
+      0,
+      11,
+      3,
+      "LATENT"
+    ],
+    [
+      20,
+      39,
+      0,
+      12,
+      1,
+      "STRING"
+    ],
+    [
+      21,
+      14,
+      0,
+      12,
+      0,
+      "CLIP"
+    ],
+    [
+      22,
+      14,
+      0,
+      13,
+      0,
+      "CLIP"
+    ],
+    [
+      23,
+      11,
+      0,
+      15,
+      0,
+      "LATENT"
+    ],
+    [
+      24,
+      16,
+      0,
+      15,
+      1,
+      "VAE"
+    ],
+    [
+      25,
+      10,
+      0,
+      19,
+      0,
+      "MODEL"
+    ],
+    [
+      26,
+      15,
+      0,
+      37,
+      0,
+      "IMAGE"
+    ],
+    [
+      27,
+      40,
+      0,
+      39,
+      0,
+      "STRING"
+    ],
+    [
+      31,
+      45,
+      0,
+      39,
+      2,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7247295000000037,
+      "offset": [
+        927.0858685620728,
+        -200.36160118742794
+      ]
+    },
+    "ue_links": []
+  },
+  "version": 0.4
 }
