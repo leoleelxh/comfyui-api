@@ -150,7 +150,9 @@ def run_workflow(workflow_name):
             }), 400
         
         # 打印最终的工作流数据
-        print(f"Final workflow data: {json.dumps(workflow_data, indent=2)}")
+        print("\n=== Final Workflow JSON ===")
+        print(json.dumps(workflow_data, indent=2, ensure_ascii=False))
+        print("=== End of Workflow JSON ===\n")
         
         try:
             # 1. 先提交客户端ID
@@ -158,7 +160,13 @@ def run_workflow(workflow_name):
             
             # 2. 提交工作流到prompt接口
             prompt_url = get_comfyui_url('/prompt')
-            print(f"Sending workflow to prompt endpoint: {prompt_url}")
+            print(f"\nSubmitting workflow to ComfyUI at: {prompt_url}")
+            print("\n=== Request to ComfyUI ===")
+            print(json.dumps({
+                "prompt": workflow_data,
+                "client_id": client_id
+            }, indent=2, ensure_ascii=False))
+            print("=== End of Request ===\n")
             
             prompt_response = make_comfyui_request('POST', '/prompt', json={
                 "prompt": workflow_data,

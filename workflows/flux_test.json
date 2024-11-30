@@ -150,7 +150,15 @@
         0
       ],
       "text_b": [
-        "41",
+        "42",
+        0
+      ],
+      "text_c": [
+        "43",
+        0
+      ],
+      "text_d": [
+        "44",
         0
       ]
     },
@@ -168,9 +176,27 @@
       "title": "多行文本"
     }
   },
-  "41": {
+  "42": {
     "inputs": {
-      "text": "prompt"
+      "text": "p1"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "43": {
+    "inputs": {
+      "text": "p2"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "44": {
+    "inputs": {
+      "text": "p3"
     },
     "class_type": "Text Multiline",
     "_meta": {
