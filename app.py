@@ -105,26 +105,39 @@ def run_workflow(workflow_name):
         request_data = request.get_json()
         print(f"Parsed request data: {request_data}")
         
-        # 如果请求中包含参数，则更新工作流参数
-        if isinstance(request_data, str):
-            # 如果是字符串，需要找到工作流中的 CLIPTextEncode 节点
-            text_nodes = {
-                node_id: node_data 
-                for node_id, node_data in workflow_data.items()
-                if node_data.get('class_type') == 'CLIPTextEncode'
-            }
+        # 处理请求数据
+        if isinstance(request_data, dict) and 'prompt' in request_data:
+            # 新格式：{"prompt": "text", "target_node": "node_id"}
+            prompt_text = request_data['prompt']
+            target_node = request_data.get('target_node')
             
-            if not text_nodes:
-                return jsonify({
-                    'error': 'No CLIPTextEncode node found in workflow'
-                }), 400
+            if target_node and target_node in workflow_data:
+                # 如果指定了目标节点且存在，直接更新该节点
+                if workflow_data[target_node].get('class_type') in ['Text Multiline', 'CLIPTextEncode']:
+                    workflow_data[target_node]['inputs']['text'] = prompt_text
+                else:
+                    return jsonify({
+                        'error': f'Target node {target_node} is not a text input node'
+                    }), 400
+            else:
+                # 如果没有指定目标节点，查找第一个合适的文本节点
+                text_nodes = {
+                    node_id: node_data 
+                    for node_id, node_data in workflow_data.items()
+                    if node_data.get('class_type') in ['Text Multiline', 'CLIPTextEncode']
+                }
                 
-            # 使用找到的第一个文本节点（如果有多个，用户应该使用详细的字典格式来指定）
-            text_node_id = next(iter(text_nodes))
-            workflow_data[text_node_id]['inputs']['text'] = request_data
-            
+                if not text_nodes:
+                    return jsonify({
+                        'error': 'No suitable text input node found in workflow'
+                    }), 400
+                
+                # 使用找到的第一个文本节点
+                text_node_id = next(iter(text_nodes))
+                workflow_data[text_node_id]['inputs']['text'] = prompt_text
+                
         elif isinstance(request_data, dict):
-            # 如果是字典，按原来的方式更新节点
+            # 保持对原有格式的支持：直接的节点更新
             for node_id, node_data in request_data.items():
                 if node_id in workflow_data:
                     if 'inputs' in node_data:
@@ -133,7 +146,7 @@ def run_workflow(workflow_name):
                         workflow_data[node_id]['inputs'].update(node_data)
         else:
             return jsonify({
-                'error': 'Request data must be either a string (prompt text) or an object (node updates)'
+                'error': 'Invalid request format. Expected either {"prompt": "text", "target_node": "node_id"} or node updates object'
             }), 400
         
         # 打印最终的工作流数据
