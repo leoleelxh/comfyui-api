@@ -67,28 +67,64 @@ GET /api/workflows
 
 #### 运行工作流
 
-提供两种请求格式：
+支持两种格式的工作流更新请求：
 
-1. 简单格式（推荐）：直接指定提示语和目标节点
+#### 2.1 简单格式
+
+适用于只需要更新单个文本节点的场景。
+
 ```http
 POST /api/workflow/<workflow_name>
-Content-Type: application/json
+```
 
+请求体：
+```json
 {
-    "prompt": "your prompt text",
-    "target_node": "41"  // 可选，不指定时会自动查找第一个文本输入节点
+    "prompt": "your text prompt",
+    "target_node": "node_id"
 }
 ```
 
-2. 高级格式：直接更新节点参数
+#### 2.2 高级格式
+
+适用于需要同时更新多个不同节点的场景。
+
 ```http
 POST /api/workflow/<workflow_name>
-Content-Type: application/json
+```
 
+请求体：
+```json
 {
-    "1": {
+    "node_id1": {
         "inputs": {
-            "text": "a beautiful mountain landscape"
+            "text": "your text for node 1"
+        }
+    },
+    "node_id2": {
+        "inputs": {
+            "text": "your text for node 2"
+        }
+    }
+}
+```
+
+示例：同时更新提示词、标题和短语
+```json
+{
+    "58": {
+        "inputs": {
+            "text": "A young man standing in front of a building..."
+        }
+    },
+    "126": {
+        "inputs": {
+            "text": "惊喜的购物狂欢"
+        }
+    },
+    "128": {
+        "inputs": {
+            "text": "意外的礼物, 购物的快乐"
         }
     }
 }
@@ -98,10 +134,8 @@ Content-Type: application/json
 ```json
 {
     "status": "success",
-    "prompt_id": "c74f73fc-fb01-4b3c-81a5-cab506c43e27",
-    "node_errors": {},
-    "error": null,
-    "client_id": "my-api-1732866007"
+    "prompt_id": "12345",
+    "client_id": "my-api-1234567890"
 }
 ```
 

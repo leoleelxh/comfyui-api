@@ -53,7 +53,7 @@
   },
   "51": {
     "inputs": {
-      "seed": 160094906321501,
+      "seed": 812550846327246,
       "steps": 20,
       "cfg": 1,
       "sampler_name": "euler",
@@ -157,7 +157,7 @@
   },
   "58": {
     "inputs": {
-      "text": "A young woman sitting in a cozy armchair, her long black hair flowing over her shoulders, her eyes sharp and calculating like a cat's. She wears a sleek, black dress that accentuates her curves. Her lips curl into a sly smile as she holds a crystal ball in her hands, her expression both mysterious and alluring. The background is dim, with soft shadows casting an enigmatic aura around her."
+      "text": "The couple walking hand in hand, their fingers intertwined. The girl's face is flushed with happiness, her eyes sparkling with excitement. The boy looks at her with a soft smile, his grip on her hand firm yet gentle. The background is a bustling street, but their world seems to narrow down to just the two of them, surrounded by the warmth of their newfound closeness."
     },
     "class_type": "Text Multiline",
     "_meta": {
@@ -170,7 +170,7 @@
         "56",
         0
       ],
-      "text2": "gender topic, in front of a white background, Modern illustration style,Soft tones, primarily featuring white and natural skin colors,Clean lines, delicate facial expressions, warm emotional expression, natural poses and interactions, A young woman sitting in a cozy armchair, her long black hair flowing over her shoulders, her eyes sharp and calculating like a cat's. She wears a sleek, black dress that accentuates her curves. Her lips curl into a sly smile as she holds a crystal ball in her hands, her expression both mysterious and alluring. The background is dim, with soft shadows casting an enigmatic aura around her."
+      "text2": "gender topic, in front of a white background, Modern illustration style,Soft tones, primarily featuring white and natural skin colors,Clean lines, delicate facial expressions, warm emotional expression, natural poses and interactions, The couple walking hand in hand, their fingers intertwined. The girl's face is flushed with happiness, her eyes sparkling with excitement. The boy looks at her with a soft smile, his grip on her hand firm yet gentle. The background is a bustling street, but their world seems to narrow down to just the two of them, surrounded by the warmth of their newfound closeness."
     },
     "class_type": "ShowText|pysssss",
     "_meta": {
@@ -204,7 +204,7 @@
       "right": 0,
       "color": "#ffffff",
       "image": [
-        "47",
+        "193",
         0
       ]
     },
@@ -215,7 +215,7 @@
   },
   "126": {
     "inputs": {
-      "text": "惊喜的购物狂欢"
+      "text": "第一次牵手后的心动"
     },
     "class_type": "Text Multiline",
     "_meta": {
@@ -224,7 +224,7 @@
   },
   "128": {
     "inputs": {
-      "text": "意外的礼物, 购物的快乐, 眼神的闪光"
+      "text": "手心温暖, 幸福满溢, 甜蜜同行"
     },
     "class_type": "Text Multiline",
     "_meta": {
@@ -301,7 +301,7 @@
         "133",
         0
       ],
-      "text2": "意外的礼物"
+      "text2": "手心温暖"
     },
     "class_type": "ShowText|pysssss",
     "_meta": {
@@ -314,7 +314,7 @@
         "133",
         1
       ],
-      "text2": "购物的快乐"
+      "text2": "幸福满溢"
     },
     "class_type": "ShowText|pysssss",
     "_meta": {
@@ -327,7 +327,7 @@
         "133",
         2
       ],
-      "text2": "眼神的闪光"
+      "text2": "甜蜜同行"
     },
     "class_type": "ShowText|pysssss",
     "_meta": {
@@ -509,7 +509,7 @@
     "inputs": {
       "Value_A": 40,
       "Value_B": 50,
-      "seed": 2853336060
+      "seed": 720132449
     },
     "class_type": "DF_Random",
     "_meta": {
@@ -520,7 +520,7 @@
     "inputs": {
       "Value_A": 60,
       "Value_B": 70,
-      "seed": 142478358
+      "seed": 2860414014
     },
     "class_type": "DF_Random",
     "_meta": {
@@ -531,7 +531,7 @@
     "inputs": {
       "Value_A": 75,
       "Value_B": 90,
-      "seed": 2945052699
+      "seed": 338477865
     },
     "class_type": "DF_Random",
     "_meta": {
@@ -542,7 +542,7 @@
     "inputs": {
       "Value_A": 50,
       "Value_B": 70,
-      "seed": 1317375442
+      "seed": 1653172153
     },
     "class_type": "DF_Random",
     "_meta": {
@@ -553,7 +553,7 @@
     "inputs": {
       "Value_A": 30,
       "Value_B": 50,
-      "seed": 1721259790
+      "seed": 2132304914
     },
     "class_type": "DF_Random",
     "_meta": {
@@ -564,7 +564,7 @@
     "inputs": {
       "Value_A": 50,
       "Value_B": 70,
-      "seed": 1112526548
+      "seed": 1995811542
     },
     "class_type": "DF_Random",
     "_meta": {
@@ -660,6 +660,215 @@
     "class_type": "SaveImage",
     "_meta": {
       "title": "保存图像"
+    }
+  },
+  "176": {
+    "inputs": {
+      "seed": 421665438723860,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "50",
+        0
+      ],
+      "positive": [
+        "54",
+        0
+      ],
+      "negative": [
+        "52",
+        0
+      ],
+      "latent_image": [
+        "177",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "K采样器"
+    }
+  },
+  "177": {
+    "inputs": {
+      "grow_mask_by": 6,
+      "pixels": [
+        "47",
+        0
+      ],
+      "vae": [
+        "50",
+        2
+      ],
+      "mask": [
+        "196",
+        0
+      ]
+    },
+    "class_type": "VAEEncodeForInpaint",
+    "_meta": {
+      "title": "VAE内补编码器"
+    }
+  },
+  "178": {
+    "inputs": {
+      "samples": [
+        "176",
+        0
+      ],
+      "vae": [
+        "50",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "183": {
+    "inputs": {
+      "masks": [
+        "188",
+        1
+      ]
+    },
+    "class_type": "Mask Fill Holes",
+    "_meta": {
+      "title": "遮罩填充漏洞"
+    }
+  },
+  "185": {
+    "inputs": {
+      "expand": 30,
+      "tapered_corners": true,
+      "mask": [
+        "183",
+        0
+      ]
+    },
+    "class_type": "GrowMask",
+    "_meta": {
+      "title": "遮罩扩展"
+    }
+  },
+  "187": {
+    "inputs": {
+      "model_name": "GroundingDINO_SwinB (938MB)"
+    },
+    "class_type": "GroundingDinoModelLoader (segment anything)",
+    "_meta": {
+      "title": "G-Dino模型加载器"
+    }
+  },
+  "188": {
+    "inputs": {
+      "prompt": "hands",
+      "threshold": 0.3,
+      "sam_model": [
+        "190",
+        0
+      ],
+      "grounding_dino_model": [
+        "187",
+        0
+      ],
+      "image": [
+        "47",
+        0
+      ]
+    },
+    "class_type": "GroundingDinoSAMSegment (segment anything)",
+    "_meta": {
+      "title": "G-DinoSAM语义分割"
+    }
+  },
+  "190": {
+    "inputs": {
+      "model_name": "sam_vit_h (2.56GB)"
+    },
+    "class_type": "SAMModelLoader (segment anything)",
+    "_meta": {
+      "title": "SAM模型加载器"
+    }
+  },
+  "191": {
+    "inputs": {
+      "seed": 641195058877462,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.2,
+      "model": [
+        "50",
+        0
+      ],
+      "positive": [
+        "54",
+        0
+      ],
+      "negative": [
+        "52",
+        0
+      ],
+      "latent_image": [
+        "192",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "K采样器"
+    }
+  },
+  "192": {
+    "inputs": {
+      "pixels": [
+        "178",
+        0
+      ],
+      "vae": [
+        "50",
+        2
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE编码"
+    }
+  },
+  "193": {
+    "inputs": {
+      "samples": [
+        "191",
+        0
+      ],
+      "vae": [
+        "50",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "196": {
+    "inputs": {
+      "amount": 50,
+      "device": "auto",
+      "mask": [
+        "185",
+        0
+      ]
+    },
+    "class_type": "MaskBlur+",
+    "_meta": {
+      "title": "遮罩模糊"
     }
   }
 }
