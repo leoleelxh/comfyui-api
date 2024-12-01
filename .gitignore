@@ -22,7 +22,7 @@ wheels/
 
 # Virtual Environment
 venv/
-workflows/
+
 bak/
 env/
 ENV/
