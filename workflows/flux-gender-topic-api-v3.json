@@ -1,0 +1,647 @@
+{
+  "18": {
+    "inputs": {
+      "width": 680,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "空Latent"
+    }
+  },
+  "46": {
+    "inputs": {
+      "text": [
+        "56",
+        0
+      ],
+      "clip": [
+        "50",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP文本编码器"
+    }
+  },
+  "47": {
+    "inputs": {
+      "samples": [
+        "51",
+        0
+      ],
+      "vae": [
+        "50",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "50": {
+    "inputs": {
+      "ckpt_name": "FLUX\\flux1-dev-fp8.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Checkpoint加载器(简易)"
+    }
+  },
+  "51": {
+    "inputs": {
+      "seed": 575183350391852,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "55",
+        0
+      ],
+      "positive": [
+        "54",
+        0
+      ],
+      "negative": [
+        "52",
+        0
+      ],
+      "latent_image": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "K采样器"
+    }
+  },
+  "52": {
+    "inputs": {
+      "text": [
+        "75",
+        0
+      ],
+      "clip": [
+        "50",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP文本编码器"
+    }
+  },
+  "54": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "46",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "Flux引导"
+    }
+  },
+  "55": {
+    "inputs": {
+      "lora_name": "自制\\flux-gender-topic\\gender-topic-000008.safetensors",
+      "strength_model": 1.1,
+      "model": [
+        "50",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoRA加载器(仅模型)"
+    }
+  },
+  "56": {
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "57",
+        0
+      ],
+      "text_b": [
+        "70",
+        0
+      ],
+      "text_c": [
+        "58",
+        0
+      ]
+    },
+    "class_type": "Text Concatenate",
+    "_meta": {
+      "title": "文本连锁"
+    }
+  },
+  "57": {
+    "inputs": {
+      "text": "gender topic, in front of a white background"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "58": {
+    "inputs": {
+      "text": "A young woman lounging on a sofa, her hair still damp from the shower, wrapped in a fluffy towel. Her eyes are half-closed, looking sleepy and content. She holds a glass of wine in one hand, her fingers lightly touching the stem. The background is a cozy living room, with soft lighting and a warm atmosphere that reflects her relaxed state."
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "64": {
+    "inputs": {
+      "text": [
+        "56",
+        0
+      ],
+      "text2": "gender topic, in front of a white background, Modern illustration style,Soft tones, primarily featuring white and natural skin colors,Clean lines, delicate facial expressions, warm emotional expression, natural poses and interactions, A young woman lounging on a sofa, her hair still damp from the shower, wrapped in a fluffy towel. Her eyes are half-closed, looking sleepy and content. She holds a glass of wine in one hand, her fingers lightly touching the stem. The background is a cozy living room, with soft lighting and a warm atmosphere that reflects her relaxed state."
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "展示文本"
+    }
+  },
+  "70": {
+    "inputs": {
+      "text": "Modern illustration style,Soft tones, primarily featuring white and natural skin colors,Clean lines, delicate facial expressions, warm emotional expression, natural poses and interactions"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "75": {
+    "inputs": {
+      "text": "NSFW, Irrational composition, irrational body structure, low image quality,text,watermark, badhand, embedding:badhandv4, embedding:ng_deepnegative_v1_75t"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "126": {
+    "inputs": {
+      "text": "刚洗完的慵懒"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "128": {
+    "inputs": {
+      "text": "慵懒美人, 刚洗完的诱惑, 闲适自在"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "130": {
+    "inputs": {
+      "text": [
+        "126",
+        0
+      ],
+      "font_file": "Alibaba-PuHuiTi-Heavy.ttf",
+      "align": "center",
+      "char_per_line": 7,
+      "leading": 8,
+      "font_size": 72,
+      "text_color": "#000000",
+      "stroke_width": 10,
+      "stroke_color": "#ffffff",
+      "x_offset": 0,
+      "y_offset": 0,
+      "width": 680,
+      "height": 512
+    },
+    "class_type": "LayerUtility: SimpleTextImage",
+    "_meta": {
+      "title": "文本图像(简易)"
+    }
+  },
+  "131": {
+    "inputs": {
+      "invert_mask": true,
+      "blend_mode": "normal",
+      "opacity": 100,
+      "x_percent": 50,
+      "y_percent": 25,
+      "mirror": "None",
+      "scale": 1,
+      "aspect_ratio": 1,
+      "rotate": 0,
+      "transform_method": "lanczos",
+      "anti_aliasing": 0,
+      "background_image": [
+        "47",
+        0
+      ],
+      "layer_image": [
+        "130",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageBlendAdvance",
+    "_meta": {
+      "title": "混合(高级)"
+    }
+  },
+  "133": {
+    "inputs": {
+      "text": [
+        "128",
+        0
+      ],
+      "delimiter": ","
+    },
+    "class_type": "CR Split String",
+    "_meta": {
+      "title": "分割字符串"
+    }
+  },
+  "134": {
+    "inputs": {
+      "text": [
+        "133",
+        0
+      ],
+      "text2": "慵懒美人"
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "展示文本"
+    }
+  },
+  "135": {
+    "inputs": {
+      "text": [
+        "133",
+        1
+      ],
+      "text2": "刚洗完的诱惑"
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "展示文本"
+    }
+  },
+  "136": {
+    "inputs": {
+      "text": [
+        "133",
+        2
+      ],
+      "text2": "闲适自在"
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "展示文本"
+    }
+  },
+  "137": {
+    "inputs": {
+      "text": [
+        "134",
+        0
+      ],
+      "font_file": "Alibaba-PuHuiTi-Heavy.ttf",
+      "align": "left",
+      "char_per_line": 80,
+      "leading": 8,
+      "font_size": 40,
+      "text_color": "#000000",
+      "stroke_width": 10,
+      "stroke_color": "#ffffff",
+      "x_offset": 0,
+      "y_offset": 0,
+      "width": 680,
+      "height": 160
+    },
+    "class_type": "LayerUtility: SimpleTextImage",
+    "_meta": {
+      "title": "文本图像(简易)"
+    }
+  },
+  "139": {
+    "inputs": {
+      "invert_mask": true,
+      "blend_mode": "normal",
+      "opacity": 100,
+      "x_percent": [
+        "150",
+        0
+      ],
+      "y_percent": [
+        "147",
+        0
+      ],
+      "mirror": "None",
+      "scale": 1,
+      "aspect_ratio": 1,
+      "rotate": 0,
+      "transform_method": "lanczos",
+      "anti_aliasing": 0,
+      "background_image": [
+        "131",
+        0
+      ],
+      "layer_image": [
+        "137",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageBlendAdvance",
+    "_meta": {
+      "title": "混合(高级)"
+    }
+  },
+  "141": {
+    "inputs": {
+      "text": [
+        "135",
+        0
+      ],
+      "font_file": "Alibaba-PuHuiTi-Heavy.ttf",
+      "align": "right",
+      "char_per_line": 80,
+      "leading": 8,
+      "font_size": 40,
+      "text_color": "#000000",
+      "stroke_width": 10,
+      "stroke_color": "#ffffff",
+      "x_offset": 0,
+      "y_offset": 0,
+      "width": 680,
+      "height": 160
+    },
+    "class_type": "LayerUtility: SimpleTextImage",
+    "_meta": {
+      "title": "文本图像(简易)"
+    }
+  },
+  "142": {
+    "inputs": {
+      "invert_mask": true,
+      "blend_mode": "normal",
+      "opacity": 100,
+      "x_percent": [
+        "151",
+        0
+      ],
+      "y_percent": [
+        "148",
+        0
+      ],
+      "mirror": "None",
+      "scale": 1,
+      "aspect_ratio": 1,
+      "rotate": 0,
+      "transform_method": "lanczos",
+      "anti_aliasing": 0,
+      "background_image": [
+        "139",
+        0
+      ],
+      "layer_image": [
+        "141",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageBlendAdvance",
+    "_meta": {
+      "title": "混合(高级)"
+    }
+  },
+  "144": {
+    "inputs": {
+      "text": [
+        "136",
+        0
+      ],
+      "font_file": "Alibaba-PuHuiTi-Heavy.ttf",
+      "align": "left",
+      "char_per_line": 80,
+      "leading": 8,
+      "font_size": 40,
+      "text_color": "#000000",
+      "stroke_width": 10,
+      "stroke_color": "#ffffff",
+      "x_offset": 0,
+      "y_offset": 0,
+      "width": 680,
+      "height": 160
+    },
+    "class_type": "LayerUtility: SimpleTextImage",
+    "_meta": {
+      "title": "文本图像(简易)"
+    }
+  },
+  "145": {
+    "inputs": {
+      "invert_mask": true,
+      "blend_mode": "normal",
+      "opacity": 100,
+      "x_percent": [
+        "152",
+        0
+      ],
+      "y_percent": [
+        "149",
+        0
+      ],
+      "mirror": "None",
+      "scale": 1,
+      "aspect_ratio": 1,
+      "rotate": 0,
+      "transform_method": "lanczos",
+      "anti_aliasing": 0,
+      "background_image": [
+        "142",
+        0
+      ],
+      "layer_image": [
+        "144",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageBlendAdvance",
+    "_meta": {
+      "title": "混合(高级)"
+    }
+  },
+  "147": {
+    "inputs": {
+      "Value_A": 40,
+      "Value_B": 50,
+      "seed": 3790330022
+    },
+    "class_type": "DF_Random",
+    "_meta": {
+      "title": "Random"
+    }
+  },
+  "148": {
+    "inputs": {
+      "Value_A": 60,
+      "Value_B": 70,
+      "seed": 1670147709
+    },
+    "class_type": "DF_Random",
+    "_meta": {
+      "title": "Random"
+    }
+  },
+  "149": {
+    "inputs": {
+      "Value_A": 75,
+      "Value_B": 90,
+      "seed": 3918023382
+    },
+    "class_type": "DF_Random",
+    "_meta": {
+      "title": "Random"
+    }
+  },
+  "150": {
+    "inputs": {
+      "Value_A": 50,
+      "Value_B": 70,
+      "seed": 3488407691
+    },
+    "class_type": "DF_Random",
+    "_meta": {
+      "title": "Random"
+    }
+  },
+  "151": {
+    "inputs": {
+      "Value_A": 30,
+      "Value_B": 50,
+      "seed": 719982104
+    },
+    "class_type": "DF_Random",
+    "_meta": {
+      "title": "Random"
+    }
+  },
+  "152": {
+    "inputs": {
+      "Value_A": 50,
+      "Value_B": 70,
+      "seed": 1088335179
+    },
+    "class_type": "DF_Random",
+    "_meta": {
+      "title": "Random"
+    }
+  },
+  "163": {
+    "inputs": {
+      "image": [
+        "137",
+        0
+      ]
+    },
+    "class_type": "Get resolution [Crystools]",
+    "_meta": {
+      "title": "获取分辨率"
+    }
+  },
+  "165": {
+    "inputs": {
+      "fill_background": true,
+      "background_color": "#cccccc",
+      "RGBA_image": [
+        "137",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageRemoveAlpha",
+    "_meta": {
+      "title": "移除Alpha"
+    }
+  },
+  "167": {
+    "inputs": {
+      "image": [
+        "141",
+        0
+      ]
+    },
+    "class_type": "Get resolution [Crystools]",
+    "_meta": {
+      "title": "获取分辨率"
+    }
+  },
+  "168": {
+    "inputs": {
+      "fill_background": true,
+      "background_color": "#cccccc",
+      "RGBA_image": [
+        "141",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageRemoveAlpha",
+    "_meta": {
+      "title": "移除Alpha"
+    }
+  },
+  "170": {
+    "inputs": {
+      "image": [
+        "144",
+        0
+      ]
+    },
+    "class_type": "Get resolution [Crystools]",
+    "_meta": {
+      "title": "获取分辨率"
+    }
+  },
+  "171": {
+    "inputs": {
+      "fill_background": true,
+      "background_color": "#cccccc",
+      "RGBA_image": [
+        "144",
+        0
+      ]
+    },
+    "class_type": "LayerUtility: ImageRemoveAlpha",
+    "_meta": {
+      "title": "移除Alpha"
+    }
+  },
+  "174": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "145",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "保存图像"
+    }
+  }
+}

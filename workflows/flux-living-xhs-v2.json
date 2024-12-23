@@ -1,0 +1,371 @@
+{
+  "6": {
+    "inputs": {
+      "text": [
+        "122",
+        0
+      ],
+      "clip": [
+        "85",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP文本编码器"
+    }
+  },
+  "10": {
+    "inputs": {
+      "vae_name": "ae.sft"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "VAE加载器"
+    }
+  },
+  "11": {
+    "inputs": {
+      "clip_name1": "flux\\t5xxl_fp8_e4m3fn.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "双CLIP加载器"
+    }
+  },
+  "12": {
+    "inputs": {
+      "unet_name": "flux1-dev-fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn_fast"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "UNET加载器"
+    }
+  },
+  "13": {
+    "inputs": {
+      "noise": [
+        "25",
+        0
+      ],
+      "guider": [
+        "22",
+        0
+      ],
+      "sampler": [
+        "16",
+        0
+      ],
+      "sigmas": [
+        "17",
+        0
+      ],
+      "latent_image": [
+        "70",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "自定义采样器(高级)"
+    }
+  },
+  "16": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "K采样器选择"
+    }
+  },
+  "17": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1,
+      "model": [
+        "85",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "基础调度器"
+    }
+  },
+  "22": {
+    "inputs": {
+      "model": [
+        "85",
+        0
+      ],
+      "conditioning": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "基础引导"
+    }
+  },
+  "25": {
+    "inputs": {
+      "noise_seed": 276165464801349
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "随机噪波"
+    }
+  },
+  "64": {
+    "inputs": {
+      "samples": [
+        "13",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "70": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "空Latent"
+    }
+  },
+  "85": {
+    "inputs": {
+      "lora_name": "FLUX抖音小红书快手真实生活照_1.0.safetensors",
+      "strength_model": 1.1,
+      "strength_clip": 1,
+      "model": [
+        "12",
+        0
+      ],
+      "clip": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA加载器"
+    }
+  },
+  "122": {
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "123",
+        0
+      ],
+      "text_b": [
+        "126",
+        0
+      ],
+      "text_c": [
+        "124",
+        0
+      ]
+    },
+    "class_type": "Text Concatenate",
+    "_meta": {
+      "title": "文本连锁"
+    }
+  },
+  "123": {
+    "inputs": {
+      "text": "LLL"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "124": {
+    "inputs": {
+      "text": "a sexy woman sitting in an office "
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "125": {
+    "inputs": {
+      "text": [
+        "122",
+        0
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "展示文本"
+    }
+  },
+  "126": {
+    "inputs": {
+      "text": "Half body shooting"
+    },
+    "class_type": "Text Multiline",
+    "_meta": {
+      "title": "多行文本"
+    }
+  },
+  "137": {
+    "inputs": {
+      "noise": [
+        "25",
+        0
+      ],
+      "guider": [
+        "22",
+        0
+      ],
+      "sampler": [
+        "16",
+        0
+      ],
+      "sigmas": [
+        "138",
+        0
+      ],
+      "latent_image": [
+        "139",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "自定义采样器(高级)"
+    }
+  },
+  "138": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 0.5,
+      "model": [
+        "85",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "基础调度器"
+    }
+  },
+  "139": {
+    "inputs": {
+      "pixels": [
+        "145",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE编码"
+    }
+  },
+  "140": {
+    "inputs": {
+      "model_name": "4xRealWebPhoto_v4_dat2.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "放大模型加载器"
+    }
+  },
+  "141": {
+    "inputs": {
+      "upscale_model": [
+        "140",
+        0
+      ],
+      "image": [
+        "147",
+        0
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "图像通过模型放大"
+    }
+  },
+  "142": {
+    "inputs": {
+      "samples": [
+        "137",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "144": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "142",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "保存图像"
+    }
+  },
+  "145": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "scale_by": 0.38,
+      "image": [
+        "141",
+        0
+      ]
+    },
+    "class_type": "ImageScaleBy",
+    "_meta": {
+      "title": "图像按系数缩放"
+    }
+  },
+  "147": {
+    "inputs": {
+      "anything": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "easy cleanGpuUsed",
+    "_meta": {
+      "title": "清理GPU占用"
+    }
+  }
+}
